@@ -1,0 +1,352 @@
+[
+  {
+	"Name": "联创杰",
+	"ParentCode": "0",
+	"DeptCode": "10"
+  },
+  {
+	"Name": "总经办",
+	"ParentCode": "10",
+	"DeptCode": "1001"
+  },
+  {
+	"Name": "财务部",
+	"ParentCode": "10",
+	"DeptCode": "1002"
+  },
+  {
+	"Name": "销售部",
+	"ParentCode": "10",
+	"DeptCode": "1003"
+  },
+  {
+	"Name": "终端销售",
+	"ParentCode": "1003",
+	"DeptCode": "100305"
+  },
+  {
+	"Name": "终端一组",
+	"ParentCode": "100305",
+	"DeptCode": "10030501"
+  },
+  {
+	"Name": "终端一组-GH小组",
+	"ParentCode": "10030501",
+	"DeptCode": "1003050101"
+  },
+  {
+	"Name": "终端一组-QC小组",
+	"ParentCode": "10030501",
+	"DeptCode": "1003050102"
+  },
+  {
+	"Name": "终端二组",
+	"ParentCode": "100305",
+	"DeptCode": "10030502"
+  },
+  {
+	"Name": "终端三组",
+	"ParentCode": "100305",
+	"DeptCode": "10030503"
+  },
+  {
+	"Name": "综合一组",
+	"ParentCode": "100307",
+	"DeptCode": "10030504"
+  },
+  {
+	"Name": "综合二组",
+	"ParentCode": "100307",
+	"DeptCode": "10030505"
+  },
+  {
+	"Name": "综合三组",
+	"ParentCode": "100307",
+	"DeptCode": "10030506"
+  },
+  {
+	"Name": "市场部",
+	"ParentCode": "100307",
+	"DeptCode": "10030507"
+  },
+  {
+	"Name": "终端四组",
+	"ParentCode": "100305",
+	"DeptCode": "10030508"
+  },
+  {
+	"Name": "南京办",
+	"ParentCode": "100305",
+	"DeptCode": "10030510"
+  },
+  {
+	"Name": "新人组",
+	"ParentCode": "100305",
+	"DeptCode": "10030511"
+  },
+  {
+	"Name": "苏州办",
+	"ParentCode": "100305",
+	"DeptCode": "10030512"
+  },
+  {
+	"Name": "终端销售-ZN组",
+	"ParentCode": "100305",
+	"DeptCode": "10030513"
+  },
+  {
+	"Name": "库存销售",
+	"ParentCode": "1003",
+	"DeptCode": "100306"
+  },
+  {
+	"Name": "综合销售",
+	"ParentCode": "1003",
+	"DeptCode": "100307"
+  },
+  {
+	"Name": "库存一组",
+	"ParentCode": "100306",
+	"DeptCode": "100331"
+  },
+  {
+	"Name": "库存二组",
+	"ParentCode": "100306",
+	"DeptCode": "100332"
+  },
+  {
+	"Name": "渠道开发部门",
+	"ParentCode": "10",
+	"DeptCode": "1004"
+  },
+  {
+	"Name": "现货组",
+	"ParentCode": "1004",
+	"DeptCode": "100401"
+  },
+  {
+	"Name": "大中华组",
+	"ParentCode": "1004",
+	"DeptCode": "100402"
+  },
+  {
+	"Name": "大中华|现货组",
+	"ParentCode": "100402",
+	"DeptCode": "10040205"
+  },
+  {
+	"Name": "亚洲组",
+	"ParentCode": "1004",
+	"DeptCode": "100403"
+  },
+  {
+	"Name": "XX组",
+	"ParentCode": "100403",
+	"DeptCode": "10040301"
+  },
+  {
+	"Name": "亚洲|专员组",
+	"ParentCode": "100403",
+	"DeptCode": "10040302"
+  },
+  {
+	"Name": "亚洲|ADI组",
+	"ParentCode": "100403",
+	"DeptCode": "10040303"
+  },
+  {
+	"Name": "亚洲|TI组",
+	"ParentCode": "100403",
+	"DeptCode": "10040304"
+  },
+  {
+	"Name": "北美组",
+	"ParentCode": "1004",
+	"DeptCode": "100404"
+  },
+  {
+	"Name": "OEM组",
+	"ParentCode": "100404",
+	"DeptCode": "10040401"
+  },
+  {
+	"Name": "北美|专员组",
+	"ParentCode": "100404",
+	"DeptCode": "10040402"
+  },
+  {
+	"Name": "北美|ADI组",
+	"ParentCode": "100404",
+	"DeptCode": "10040403"
+  },
+  {
+	"Name": "北美|TI组",
+	"ParentCode": "100404",
+	"DeptCode": "10040404"
+  },
+  {
+	"Name": "欧洲组",
+	"ParentCode": "1004",
+	"DeptCode": "100405"
+  },
+  {
+	"Name": "欧洲|专员组",
+	"ParentCode": "100405",
+	"DeptCode": "10040501"
+  },
+  {
+	"Name": "欧洲|ADI组",
+	"ParentCode": "100405",
+	"DeptCode": "10040502"
+  },
+  {
+	"Name": "欧洲|TI组",
+	"ParentCode": "100405",
+	"DeptCode": "10040503"
+  },
+  {
+	"Name": "海外组",
+	"ParentCode": "1004",
+	"DeptCode": "100406"
+  },
+  {
+	"Name": "海外|LN组",
+	"ParentCode": "100406",
+	"DeptCode": "10040601"
+  },
+  {
+	"Name": "海外|CD组",
+	"ParentCode": "100406",
+	"DeptCode": "10040602"
+  },
+  {
+	"Name": "海外|CH组",
+	"ParentCode": "100406",
+	"DeptCode": "10040603"
+  },
+  {
+	"Name": "代理采购",
+	"ParentCode": "1004",
+	"DeptCode": "100407"
+  },
+  {
+	"Name": "大中华|ADI组",
+	"ParentCode": "100402",
+	"DeptCode": "100408"
+  },
+  {
+	"Name": "大中华|TI组",
+	"ParentCode": "100402",
+	"DeptCode": "100409"
+  },
+  {
+	"Name": "大中华|YE组",
+	"ParentCode": "100402",
+	"DeptCode": "100410"
+  },
+  {
+	"Name": "定价组",
+	"ParentCode": "1004",
+	"DeptCode": "100411"
+  },
+  {
+	"Name": "大中华|专员组",
+	"ParentCode": "100402",
+	"DeptCode": "100412"
+  },
+  {
+	"Name": "全球组",
+	"ParentCode": "1004",
+	"DeptCode": "100413"
+  },
+  {
+	"Name": "ADI Sourcing组",
+	"ParentCode": "1004",
+	"DeptCode": "100414"
+  },
+  {
+	"Name": "TI Sourcing组",
+	"ParentCode": "1004",
+	"DeptCode": "100415"
+  },
+  {
+	"Name": "ADI受控组",
+	"ParentCode": "1004",
+	"DeptCode": "100416"
+  },
+  {
+	"Name": "物流部",
+	"ParentCode": "10",
+	"DeptCode": "1005"
+  },
+  {
+	"Name": "福田仓",
+	"ParentCode": "1005",
+	"DeptCode": "100501"
+  },
+  {
+	"Name": "香港仓",
+	"ParentCode": "1005",
+	"DeptCode": "100502"
+  },
+  {
+	"Name": "罗湖仓",
+	"ParentCode": "1005",
+	"DeptCode": "100503"
+  },
+  {
+	"Name": "质检测试",
+	"ParentCode": "1005",
+	"DeptCode": "10053"
+  },
+  {
+	"Name": "人事部",
+	"ParentCode": "10",
+	"DeptCode": "1006"
+  },
+  {
+	"Name": "海外销售",
+	"ParentCode": "10",
+	"DeptCode": "1007"
+  },
+  {
+	"Name": "海外一组",
+	"ParentCode": "1007",
+	"DeptCode": "100701"
+  },
+  {
+	"Name": "海外二组",
+	"ParentCode": "1007",
+	"DeptCode": "100702"
+  },
+  {
+	"Name": "海外三组",
+	"ParentCode": "1007",
+	"DeptCode": "100703"
+  },
+  {
+	"Name": "代理部",
+	"ParentCode": "10",
+	"DeptCode": "1008"
+  },
+  {
+	"Name": "技术支持",
+	"ParentCode": "10",
+	"DeptCode": "1009"
+  },
+  {
+	"Name": "IT信息部",
+	"ParentCode": "10",
+	"DeptCode": "1010"
+  },
+  {
+	"Name": "公共部门",
+	"ParentCode": "10",
+	"DeptCode": "1011"
+  },
+  {
+	"Name": "PMC部门",
+	"ParentCode": "10",
+	"DeptCode": "1012"
+  }
+]

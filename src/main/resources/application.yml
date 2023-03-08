@@ -1,0 +1,10 @@
+server:
+  port: 8966
+spring:
+  application:
+    name: SAPOrgSync
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/saporgsync?serverTimezone=Asia/Shanghai&characterEncoding=utf8&useUnicode=true&useSSL=false
+    username: root
+    password: root
