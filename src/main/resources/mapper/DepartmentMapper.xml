@@ -2,11 +2,11 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.sap360.saporgsync.mapper.DepartmentMapper">
 	<insert id="insertBatch">
-		INSERT INTO *
-		()
+		INSERT INTO department
+		    (`name`, feishu_dept_id, feishu_parent_id, sap_dept_id, sap_parent_id, doc_entry)
 		VALUES
 		<foreach collection="departments" item="item" separator=",">
-			(item.)
+			(#{item.name}, #{item.feishuDeptId}, #{item.feishuParentId}, #{item.sapDeptId}, #{item.sapParentId}, #{item.docEntry})
 		</foreach>
 	</insert>
 </mapper>

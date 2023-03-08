@@ -14,13 +14,10 @@ import java.util.List;
 @Mapper
 public interface DepartmentMapper extends BaseMapper<Department> {
 
-	default List<Department> selectAll() {
-		return selectList(new LambdaQueryWrapper<>());
-	}
+    default List<Department> selectAll() {
+        return selectList(new LambdaQueryWrapper<>());
+    }
 
-	void insertBatch(List<Department> departments);
+    void insertBatch(List<Department> departments);
 
-	default long count() {
-		return selectCount(new LambdaQueryWrapper<>());
-	}
 }

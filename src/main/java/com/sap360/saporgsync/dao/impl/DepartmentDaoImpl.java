@@ -42,10 +42,10 @@ public class DepartmentDaoImpl implements DepartmentDao {
 
 	@Override
 	public boolean add(Department department) {
-		String sql = "insert into department(id, feishu_id, feishu_parent_id, sap_id, sap_parent_id, name, doc_entry) value (?,?,?,?,?,?)";
-		jdbcTemplate.update(sql, department.getId(), department.getFeishuId(), department.getFeishuParentId(),
-				department.getSapId(), department.getSapParentId(),
-				department.getName(), department.getDocEntry());
+//		String sql = "insert into department(id, feishu_id, feishu_parent_id, sap_id, sap_parent_id, name, doc_entry) value (?,?,?,?,?,?)";
+//		jdbcTemplate.update(sql, department.getId(), department.getFeishuId(), department.getFeishuParentId(),
+//				department.getSapId(), department.getSapParentId(),
+//				department.getName(), department.getDocEntry());
 		return true;
 	}
 
@@ -58,7 +58,7 @@ public class DepartmentDaoImpl implements DepartmentDao {
 					public void setValues(PreparedStatement ps, int i) throws SQLException {
 //						ps.setString(1, departments.get(i).getId());
 //						ps.setString(2, departments.get(i).getParentId());
-						ps.setString(3, departments.get(i).getSapId());
+//						ps.setString(3, departments.get(i).getSapId());
 						ps.setString(4, departments.get(i).getSapParentId());
 						ps.setString(5, departments.get(i).getName());
 						ps.setString(6, departments.get(i).getDocEntry());

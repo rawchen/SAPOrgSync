@@ -23,30 +23,30 @@ public class Department {
 	@TableId(type = IdType.AUTO)
 	private long id;
 
+    /**
+     * 部门名称
+     */
+    private String name;
+
 	/**
 	 * 飞书部门ID
 	 */
-	private String feishuId;
+	private String feishuDeptId;
 
 	/**
-	 * 飞书父ID
+	 * 飞书部门父ID
 	 */
 	private String feishuParentId;
 
 	/**
 	 * 部门ID（SAP系统）
 	 */
-	private String sapId;
+	private String sapDeptId;
 
 	/**
 	 * 部门父ID（SAP系统）
 	 */
 	private String sapParentId;
-
-	/**
-	 * 部门名称
-	 */
-	private String name;
 
 	/**
 	 * 单据编号

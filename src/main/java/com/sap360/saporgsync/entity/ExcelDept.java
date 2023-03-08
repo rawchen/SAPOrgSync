@@ -9,20 +9,14 @@ import lombok.Data;
 @Data
 public class ExcelDept implements Comparable<ExcelDept> {
 
-	private String id;
-
-	private String content;
-
-	private String parentID;
+    private String id;
+    private String name;
+    private String parentId;
 
 
-	@Override
-	public int compareTo(ExcelDept o) {
-		String str = o.getContent().replace("/", "");
-		if (content.length() > str.length()) {
-			return 0;
-		} else {
-			return 1;
-		}
-	}
+    @Override
+    public int compareTo(ExcelDept o) {
+        String str = o.getName().replace("/", "");
+        return name.length() > str.length() ? 0 : 1;
+    }
 }
