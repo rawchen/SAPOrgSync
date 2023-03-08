@@ -7,6 +7,7 @@ import com.alibaba.excel.event.AnalysisEventListener;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.lark.oapi.core.utils.Jsons;
 import com.lark.oapi.event.EventDispatcher;
 import com.lark.oapi.sdk.servlet.ext.ServletAdapter;
@@ -15,13 +16,16 @@ import com.lark.oapi.service.contact.v3.model.*;
 import com.sap360.saporgsync.config.Constants;
 import com.sap360.saporgsync.dao.UserDao;
 import com.sap360.saporgsync.entity.Department;
+import com.sap360.saporgsync.entity.ExcelUser;
+import com.sap360.saporgsync.entity.SapDept;
 import com.sap360.saporgsync.entity.User;
-import com.sap360.saporgsync.entity.*;
 import com.sap360.saporgsync.mapper.DepartmentMapper;
+import com.sap360.saporgsync.mapper.UserMapper;
+import com.sap360.saporgsync.service.DeptService;
+import com.sap360.saporgsync.util.SignUtil;
 import com.sap360.saporgsync.util.StringUtil;
 import com.sap360.saporgsync.util.TimeUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
@@ -32,8 +36,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author RawChen
@@ -41,7 +47,7 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @RestController
-@RequestMapping("api/")
+@RequestMapping
 public class EventController {
 
     @Autowired
@@ -49,8 +55,15 @@ public class EventController {
 
     @Autowired
     private UserDao userDao;
+
     @Autowired
     DepartmentMapper departmentMapper;
+
+    @Autowired
+    UserMapper userMapper;
+
+    @Autowired
+    private DeptService deptService;
 
     // 注册消息处理器
     private final EventDispatcher EVENT_DISPATCHER = EventDispatcher
@@ -67,7 +80,7 @@ public class EventController {
                     JSONObject eventsObject = (JSONObject) JSONObject.parse(resultJson);
                     JSONObject eventObject = (JSONObject) eventsObject.get("event");
                     JSONObject object = (JSONObject) eventObject.get("object");
-                    String user_id = object.getString("user_id");
+//                    String user_id = object.getString("user_id");
                     String name = object.getString("name");
                     String en_name = object.getString("en_name");
                     String mobile = object.getString("mobile");
@@ -76,7 +89,7 @@ public class EventController {
                     String employee_no = object.getString("employee_no");
                     String gender = object.getString("gender");
                     String city = object.getString("city");
-                    String leader_user_id = object.getString("leader_user_id");
+//                    String leader_user_id = object.getString("leader_user_id");
                     String employee_type = object.getString("employee_type");
                     String join_time = object.getString("join_time");
                     String job_title = object.getString("job_title");
@@ -87,19 +100,25 @@ public class EventController {
                     requestJson.put("EnglishName1", en_name);
                     requestJson.put("mobile", StringUtil.mobileDivAreaCode(mobile));
                     requestJson.put("email", email);
+
                     // 拿到飞书-SAP映射的部门id
                     log.info("department_ids: {}", department_ids.getString(0));
-//                    Department byId = departmentDao.findById(department_ids.getString(0));
-//                    if (byId != null && byId.getSapId() != null && !"".equals(byId.getSapId())) {
-//                        requestJson.put("EmDept", byId.getSapId());
-//                    } else {
-//                        requestJson.put("EmDept", "");
-//                    }
-
+                    String deptIdAndName = SignUtil.getDepartmentIdAndName(department_ids.getString(0));
+                    String deptId = "";
+                    if (deptIdAndName.contains(",")) {
+                        String[] split = deptIdAndName.split(",");
+                        deptId = split[0];
+                    }
+                    Department department = departmentMapper.selectOne(new LambdaQueryWrapper<Department>().ge(Department::getFeishuDeptId, deptId).last("limit 1"));
+                    if (department != null && department.getSapDeptId() != null) {
+                        requestJson.put("EmDept", department.getSapDeptId());
+                    } else {
+                        requestJson.put("EmDept", "0");
+                    }
                     requestJson.put("JobNum", employee_no);
                     requestJson.put("sex", "1".equals(gender) ? "F" : "M");
                     requestJson.put("city", city);
-                    requestJson.put("Leader", leader_user_id);
+//                    requestJson.put("Leader", leader_user_id);
                     requestJson.put("Status", StringUtil.employeeConvert(employee_type));                    // A正式B离职C试用
                     requestJson.put("TimeOfEntry", TimeUtil.timestampToUTC(join_time));
                     requestJson.put("jobTitle", job_title);
@@ -116,10 +135,11 @@ public class EventController {
                     objects.put("COMPANYID", Constants.COMPANYID);
                     objects.put("TIMESTAMP", timestamp);
                     objects.put("FORMID", Constants.FORM_ID_USER);
-//                    String md5Token = makeMd5Token(objects, Constants.SECRETKEY, requestJsonAddArg);
-//                    url.append(Constants.DOMAIN_PORT).append(Constants.ADD)
-//                            .append("/").append(Constants.FORM_ID_USER)
-//                            .append("/").append(timestamp).append("/").append(md5Token);
+                    String md5Token = SignUtil.makeMd5Token(objects, Constants.SECRETKEY, requestJsonAddArg);
+                    url.append(Constants.DOMAIN_PORT).append(Constants.ADD)
+                            .append("/").append(Constants.FORM_ID_USER)
+                            .append("/").append(timestamp).append("/").append(md5Token);
+
                     // 3.调用SAP接口
                     try {
                         String resultStr = HttpRequest.post(url.toString())
@@ -133,11 +153,11 @@ public class EventController {
                             if (StringUtils.isNotEmpty(resultCode) && "0".equals(resultCode)) {
                                 // 新增SAP用户成功后添加用户到映射表（包含DocEntry）
                                 User user = new User();
-                                user.setId(user_id);
                                 user.setName(name);
                                 user.setDocEntry(resultObject.getString("Result"));
-                                user.setSapId(resultObject.getString("Result"));
-                                userDao.add(user);
+//                                user.setSapId();
+                                user.setDeptId(deptId);
+                                userMapper.insert(user);
 
                                 log.info("success: {}", resultStr);
                             } else {
@@ -167,7 +187,7 @@ public class EventController {
                     String employee_no = object.getString("employee_no");
                     String gender = object.getString("gender");
                     String city = object.getString("city");
-                    String leader_user_id = object.getString("leader_user_id");
+//                    String leader_user_id = object.getString("leader_user_id");
                     String employee_type = object.getString("employee_type");
                     String join_time = object.getString("join_time");
                     String job_title = object.getString("job_title");
@@ -178,23 +198,41 @@ public class EventController {
                     requestJson.put("EnglishName1", en_name);
                     requestJson.put("mobile", StringUtil.mobileDivAreaCode(mobile));
                     requestJson.put("email", email);
+
                     // 拿到飞书-SAP映射的部门id
-//                    Department byId = departmentDao.findById(department_ids.getString(0));
-//                    if (byId != null && byId.getSapId() != null && !"".equals(byId.getSapId())) {
-//                        requestJson.put("EmDept", byId.getSapId());
-//                    } else {
-//                        requestJson.put("EmDept", "");
-//                    }
+                    log.info("department_ids: {}", department_ids.getString(0));
+                    String deptIdAndName = SignUtil.getDepartmentIdAndName(department_ids.getString(0));
+                    String deptId = "";
+                    if (deptIdAndName.contains(",")) {
+                        String[] split = deptIdAndName.split(",");
+                        deptId = split[0];
+                    }
+                    Department department = departmentMapper.selectOne(new LambdaQueryWrapper<Department>().ge(Department::getFeishuDeptId, deptId).last("limit 1"));
+                    if (department != null && department.getSapDeptId() != null) {
+                        requestJson.put("EmDept", department.getSapDeptId());
+                    } else {
+                        requestJson.put("EmDept", "0");
+                    }
+
+                    // 根据飞书user_id查询sap单据id（映射好的用户数据库查）
+                    User user = userMapper.selectOne(new LambdaQueryWrapper<User>().ge(User::getUserId, user_id).last("limit 1"));
+                    String docEntry = "";
+                    if (user != null && user.getDocEntry() != null) {
+                        docEntry = user.getDocEntry();
+                    } else {
+                        docEntry = "0";
+                        log.info("用户修改事件查询不到用户DocEntry: {}", user_id);
+                    }
+
                     requestJson.put("JobNum", employee_no);
                     requestJson.put("sex", "1".equals(gender) ? "F" : "M");
                     requestJson.put("city", city);
-                    requestJson.put("Leader", leader_user_id);
+//                    requestJson.put("Leader", leader_user_id);
                     requestJson.put("Status", StringUtil.employeeConvert(employee_type));                    // A正式B离职C试用
                     requestJson.put("TimeOfEntry", TimeUtil.timestampToUTC(join_time));
                     requestJson.put("jobTitle", job_title);
                     requestJson.put("EnglishName", nickname);
                     requestJson.put("RowStatus", "U");
-                    requestJson.put("DocEntry", "219");
                     String requestJsonAddArg = "{\"U_OHEM\":[" + requestJson.toJSONString() + "],}";
 
                     // 2.接口参数处理
@@ -205,35 +243,91 @@ public class EventController {
                     objects.put("COMPANYID", Constants.COMPANYID);
                     objects.put("TIMESTAMP", timestamp);
                     objects.put("FORMID", Constants.FORM_ID_USER);
-//                    String md5Token = makeMd5Token(objects, Constants.SECRETKEY, requestJsonAddArg);
-//                    url.append(Constants.DOMAIN_PORT).append(Constants.UPDATE_USER)
-//                            .append("/").append(Constants.FORM_ID_USER)
-//                            .append("/").append(timestamp).append("/").append(md5Token);
+                    String md5Token = SignUtil.makeMd5Token(objects, Constants.SECRETKEY, requestJsonAddArg);
+                    url.append(Constants.DOMAIN_PORT).append(Constants.UPDATE_USER)
+                            .append("/").append(Constants.FORM_ID_USER)
+                            .append("/").append(docEntry)
+                            .append("/").append(timestamp).append("/").append(md5Token);
+                    log.info("修改用户事件url: {}", url);
                     // 3.调用SAP接口
-                    try {
-                        String resultStr = HttpRequest.post(url.toString())
-                                .body(requestJsonAddArg)
-                                .execute()
-                                .body();
-                        log.info("r: {}", resultStr);
-                        if (StringUtils.isNotEmpty(resultStr)) {
-                            JSONObject resultObject = (JSONObject) JSON.parse(resultStr);
-                            String resultCode = resultObject.getString("Code");
-                            if (StringUtils.isNotEmpty(resultCode) && "0".equals(resultCode)) {
-                                log.info("success: {}", resultStr);
-                            } else {
-                                log.info("fail: {}", resultStr);
-                            }
+                    String resultStr = HttpRequest.post(url.toString())
+                            .body(requestJsonAddArg).execute().body();
+                    log.info("r: {}", resultStr);
+                    if (StringUtils.isNotEmpty(resultStr)) {
+                        JSONObject resultObject = (JSONObject) JSON.parse(resultStr);
+                        String resultCode = resultObject.getString("Code");
+                        if (StringUtils.isNotEmpty(resultCode) && "0".equals(resultCode)) {
+                            log.info("success: {}", resultStr);
+                        } else {
+                            log.info("fail: {}", resultStr);
                         }
-                    } catch (Exception e) {
-                        e.printStackTrace();
                     }
+
+                    // 根据用户ID查询用户映射表，如果对应的找到用户，就更新用户映射表的部门id最新，名称最新
+                    if (user != null) {
+                        User userTemp = new User();
+                        userTemp.setId(user.getId());
+                        userTemp.setName(name);
+                        userTemp.setDeptId(deptId);
+                        userMapper.updateById(userTemp);
+                    }
+
                 }
             }).onP2UserDeletedV3(new ContactService.P2UserDeletedV3Handler() {
                 // 用户删除
                 @Override
                 public void handle(P2UserDeletedV3 event) throws Exception {
                     log.info("P2UserDeletedV3: {}", Jsons.DEFAULT.toJson(event));
+                    // 准备docEntry和飞书user_id
+                    String resultJson = Jsons.DEFAULT.toJson(event);
+                    JSONObject eventsObject = (JSONObject) JSONObject.parse(resultJson);
+                    JSONObject eventObject = (JSONObject) eventsObject.get("event");
+                    JSONObject object = (JSONObject) eventObject.get("object");
+                    String user_id = object.getString("user_id");
+                    User user = userMapper.selectOne(new LambdaQueryWrapper<User>().ge(User::getUserId, user_id).last("limit 1"));
+                    String docEntry = "";
+                    if (user != null && user.getDocEntry() != null) {
+                        docEntry = user.getDocEntry();
+                    } else {
+                        docEntry = "0";
+                        log.info("用户删除事件查询不到用户DocEntry: {}", user_id);
+                    }
+
+                    // SAP删除，根据映射表的docEntry
+                    StringBuffer url = new StringBuffer();
+                    String timestamp = TimeUtil.getTimestamp();
+                    Map<String, String> objects = new HashMap<>();
+                    objects.put("APPID", "33461238");
+                    objects.put("COMPANYID", "100001");
+                    objects.put("FORMID",   Constants.FORM_ID_USER);
+                    objects.put("TIMESTAMP", timestamp);
+                    objects.put("DOCENTRY","229");
+                    String secretKey = "624728dd116f45648ae91715a9b5b306";
+                    JSONObject requestJson = new JSONObject();
+                    requestJson.put("ComCode", "4");
+                    requestJson.put("lastName", "1");
+                    requestJson.put("EnglishName1", "1");
+                    requestJson.put("mobile", "1");
+                    requestJson.put("email", "123@qq.com");
+                    requestJson.put("EmDept", "123");
+                    requestJson.put("RowStatus", "D");
+                    String requestJsonAddArg = "{\"U_OHEM\":[" + requestJson.toJSONString() + "],}";
+                    String md5Token = SignUtil.makeMd5Token(objects, secretKey, requestJsonAddArg);
+                    url.append("http://116.6.232.123:8059/OpenAPI/Company/Document/V1/Update/33461238/100001/")
+                            .append(Constants.FORM_ID_USER).append("/").append(docEntry).append("/").append(timestamp).append("/").append(md5Token);
+                    System.out.println("url:" + url);
+                    try {
+                        String s = HttpRequest.post(url.toString())
+                                .body(requestJsonAddArg)
+                                .execute()
+                                .body();
+                        System.out.println("r:" + s);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    // 关系映射表删除根据user_id
+                    userMapper.deleteById(user.getId());
+
                 }
             })
             .onP2DepartmentCreatedV3(new ContactService.P2DepartmentCreatedV3Handler() {
@@ -241,18 +335,229 @@ public class EventController {
                 @Override
                 public void handle(P2DepartmentCreatedV3 event) throws Exception {
                     log.info("P2DepartmentCreatedV3: {}", Jsons.DEFAULT.toJson(event));
+                    String resultJson = Jsons.DEFAULT.toJson(event);
+                    JSONObject eventsObject = (JSONObject) JSONObject.parse(resultJson);
+                    JSONObject eventObject = (JSONObject) eventsObject.get("event");
+                    JSONObject object = (JSONObject) eventObject.get("object");
+                    String name = object.getString("name");
+                    String department_id = object.getString("department_id");
+                    String parent_department_id = object.getString("parent_department_id"); // od-b66de0fbb2edb71b7f5b020d675a3e04
+
+                    // 调用自建应用根据父部门id：od-xxx获取部门名和导出的id样例
+                    String deptIdAndName = SignUtil.getDepartmentIdAndName(parent_department_id);
+                    String deptParentId = "";
+                    String deptParentName = "";
+                    if (deptIdAndName.contains(",")) {
+                        String[] split = deptIdAndName.split(",");
+                        deptParentId = split[0];
+                        deptParentName = split[1];
+                    }
+
+                    // SAP新增部门
+                    String formID = "-96134";
+                    String requestJson = "{\n" +
+                            "    \"U_OEPT\":[\n" +
+                            "        {\n" +
+                            "            \"DocEntry\":1,\n" +
+                            "            \"RowStatus\":\"A\"\n" +
+                            "        }\n" +
+                            "    ],\n" +
+                            "    \"U_EPT1\":[\n" +
+                            "        {\n" +
+                            "            \"ParentName\":\"" + deptParentName + "\",\n" +
+                            "            \"DeptName\":\"" + name + "\",\n" +
+                            "            \"LineNum\":1,\n" +
+                            "            \"RowStatus\":\"A\",\n" +
+                            "            \"DocEntry\":2\n" +
+                            "        }\n" +
+                            "    ]\n" +
+                            "}";
+                    StringBuffer url = new StringBuffer();
+                    String timestamp = TimeUtil.getTimestamp();
+                    Map<String, String> objects = new HashMap<>();
+                    objects.put("APPID", "33461238");
+                    objects.put("COMPANYID", "100001");
+                    objects.put("FORMID", formID);
+                    objects.put("TIMESTAMP", timestamp);
+                    String secretKey = "624728dd116f45648ae91715a9b5b306";
+                    String md5Token = SignUtil.makeMd5Token(objects, secretKey, requestJson);
+                    url.append("http://116.6.232.123:8059/OpenAPI/Company/Document/V1/Add/33461238/100001/")
+                            .append(formID).append("/").append(timestamp).append("/").append(md5Token);
+                    System.out.println("url:" + url);
+                    String s = HttpRequest.post(url.toString())
+                            .body(requestJson)
+                            .execute()
+                            .body();
+                    System.out.println("r:" + s);
+
+                    // 插入部门后解析Result出来的docEntry，去SAP系统部门列表遍历拿到
+                    String deptCode = "";
+                    String parentCode = "";
+                    JSONObject result = (JSONObject) JSONObject.parse(s);
+                    String resultDocEntry = result.getString("Result");
+                    if (resultDocEntry != null) {
+                        List<SapDept> sapDepts = deptService.queryDepartmentList();
+                        for (SapDept sapDept : sapDepts) {
+                            if (sapDept.getDocEntry().equals(resultDocEntry)) {
+                                parentCode = sapDept.getParentId();
+                                deptCode = sapDept.getId();
+                                break;
+                            }
+                        }
+                    }
+
+                    // 映射表新增部门
+                    Department department = Department.builder()
+                            .name(name)
+                            .feishuDeptId(department_id)
+                            .feishuParentId(deptParentId)
+                            .sapParentId(parentCode)
+                            .sapDeptId(deptCode)
+                            .docEntry(resultDocEntry)
+                            .build();
+                    departmentMapper.insert(department);
+
                 }
             }).onP2DepartmentUpdatedV3(new ContactService.P2DepartmentUpdatedV3Handler() {
                 // 部门修改
                 @Override
                 public void handle(P2DepartmentUpdatedV3 event) throws Exception {
                     log.info("P2DepartmentUpdatedV3: {}", Jsons.DEFAULT.toJson(event));
+                    // 根据department_id查询Department与docEntry
+                    String resultJson = Jsons.DEFAULT.toJson(event);
+                    JSONObject eventsObject = (JSONObject) JSONObject.parse(resultJson);
+                    JSONObject eventObject = (JSONObject) eventsObject.get("event");
+                    JSONObject object = (JSONObject) eventObject.get("object");
+                    String name = object.getString("name");
+                    String department_id = object.getString("department_id");
+                    String parent_department_id = object.getString("parent_department_id");
+
+                    Department department = departmentMapper.selectOne(new LambdaQueryWrapper<Department>().ge(Department::getFeishuDeptId, department_id).last("limit 1"));
+                    String docEntry = "";
+                    if (department != null && department.getDocEntry() != null) {
+                        docEntry = department.getDocEntry();
+                    } else {
+                        docEntry = "0";
+                        log.info("部门修改事件查询不到用户DocEntry: {}", department_id);
+                    }
+
+                    // 根据parent_department_id查询原来映射表的部门
+                    String deptIdAndName = SignUtil.getDepartmentIdAndName(parent_department_id);
+                    String deptId = "";
+                    if (deptIdAndName.contains(",")) {
+                        String[] split = deptIdAndName.split(",");
+                        deptId = split[0];
+                    }
+                    String departmentParentName = "";
+                    Department departmentParent = departmentMapper.selectOne(new LambdaQueryWrapper<Department>().ge(Department::getFeishuDeptId, deptId).last("limit 1"));
+                    if (department != null && department.getSapDeptId() != null) {
+                        departmentParentName = departmentParent.getName();
+                        // 修改
+                    }
+                    // 修改SAP系统部门的名称ParentName和DeptName
+                    StringBuffer url = new StringBuffer();
+                    String timestamp = TimeUtil.getTimestamp();
+                    Map<String, String> objects = new HashMap<>();
+                    objects.put("APPID", "33461238");
+                    objects.put("COMPANYID", "100001");
+                    objects.put("FORMID", Constants.FORM_ID_DEPT);
+                    objects.put("TIMESTAMP", timestamp);
+                    objects.put("DOCENTRY",docEntry);
+                    String secretKey = "624728dd116f45648ae91715a9b5b306";
+                    String requestJson = "{\n" +
+                    "    \"U_OEPT\":[\n" +
+                            "        {\n" +
+                            "            \"DocEntry\":" + docEntry + ",\n" +
+                            "            \"RowStatus\":\"U\"\n" +
+                            "        }\n" +
+                            "    ],\n" +
+                            "    \"U_EPT1\":[\n" +
+                            "        {\n" +
+                            "            \"ParentName\":\"" + departmentParentName + "\",\n" +
+                            "            \"DeptName\":\"" + name + "\",\n" +
+                            "            \"LineNum\":1,\n" +
+                            "            \"RowStatus\":\"U\"\n" +
+                            "        },\n" +
+                            "    ]\n" +
+                            "}";
+                    String md5Token = SignUtil.makeMd5Token(objects, secretKey, requestJson);
+                    url.append("http://116.6.232.123:8059/OpenAPI/Company/Document/V1/Update/33461238/100001/")
+                            .append(Constants.FORM_ID_DEPT).append("/").append(docEntry).append("/").append(timestamp).append("/").append(md5Token);
+                    System.out.println("url:" + url);
+                    String s = HttpRequest.post(url.toString())
+                            .body(requestJson)
+                            .execute()
+                            .body();
+                    System.out.println("r:" + s);
+
+                    // 修改部门映射表，名称，飞书父id，sap父id
+                    department.setName(name);
+                    department.setFeishuParentId(deptId);
+                    department.setSapParentId(departmentParent.getSapDeptId());
+                    departmentMapper.updateById(department);
+
                 }
             }).onP2DepartmentDeletedV3(new ContactService.P2DepartmentDeletedV3Handler() {
                 // 部门删除
                 @Override
                 public void handle(P2DepartmentDeletedV3 event) throws Exception {
                     log.info("P2DepartmentDeletedV3: {}", Jsons.DEFAULT.toJson(event));
+                    // 准备docEntry和飞书department_id
+                    String resultJson = Jsons.DEFAULT.toJson(event);
+                    JSONObject eventsObject = (JSONObject) JSONObject.parse(resultJson);
+                    JSONObject eventObject = (JSONObject) eventsObject.get("event");
+                    JSONObject object = (JSONObject) eventObject.get("object");
+                    String department_id = object.getString("department_id");
+                    Department department = departmentMapper.selectOne(new LambdaQueryWrapper<Department>().ge(Department::getFeishuDeptId, department_id).last("limit 1"));
+                    String docEntry = "";
+                    if (department != null && department.getDocEntry() != null) {
+                        docEntry = department.getDocEntry();
+                    } else {
+                        docEntry = "0";
+                        log.info("部门删除事件查询不到用户DocEntry: {}", department_id);
+                    }
+
+                    // SAP删除，根据映射表的docEntry
+                    StringBuffer url = new StringBuffer();
+                    String timestamp = TimeUtil.getTimestamp();
+                    Map<String, String> objects = new HashMap<>();
+                    objects.put("APPID", "33461238");
+                    objects.put("COMPANYID", "100001");
+                    objects.put("FORMID",   Constants.FORM_ID_DEPT);
+                    objects.put("TIMESTAMP", timestamp);
+                    objects.put("DOCENTRY",docEntry);
+                    String secretKey = "624728dd116f45648ae91715a9b5b306";
+                    String requestJsonAddArg = "{\n" +
+                    "    \"U_OEPT\":[\n" +
+                            "        {\n" +
+                            "            \"DocEntry\":" + docEntry + ",\n" +
+                            "            \"RowStatus\":\"U\"\n" +
+                            "        }\n" +
+                            "    ],\n" +
+                            "    \"U_EPT1\":[\n" +
+                            "        {\n" +
+                            "            \"ParentName\":\"综合一组\",\n" +
+                            "            \"DeptName\":\"综合销售部22\",\n" +
+                            "            \"LineNum\":1,\n" +
+                            "            \"RowStatus\":\"D\"\n" +
+                            "        },\n" +
+                            "    ]\n" +
+                            "}";
+                    String md5Token = SignUtil.makeMd5Token(objects, secretKey, requestJsonAddArg);
+                    url.append("http://116.6.232.123:8059/OpenAPI/Company/Document/V1/Update/33461238/100001/")
+                            .append(Constants.FORM_ID_DEPT).append("/").append(docEntry).append("/").append(timestamp).append("/").append(md5Token);
+                    System.out.println("url:" + url);
+                    try {
+                        String s = HttpRequest.post(url.toString())
+                                .body(requestJsonAddArg)
+                                .execute()
+                                .body();
+                        System.out.println("r:" + s);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    // 关系映射表删除根据user_id
+                    departmentMapper.deleteById(department.getId());
                 }
             })
             .build();
@@ -444,9 +749,10 @@ public class EventController {
 
         for (ExcelUser excelUser : excelUsers) {
             User user = new User();
-            user.setSapId(excelUser.getId());
+//            user.setSapId(excelUser.getId());
             user.setName(excelUser.getName());
-            user.setId(excelUser.getId());
+//            user.setId(excelUser.getId());
+            user.setId(0L);
             for (Department department : departments) {
                 if (department.getName().equals(excelUser.getDeptName())) {
 //                    user.setDeptId(department.getId());

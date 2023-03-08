@@ -21,7 +21,6 @@ public class InitialOperation implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-//		eventController.initDept();
-		eventController.initUser();
+
 	}
 }

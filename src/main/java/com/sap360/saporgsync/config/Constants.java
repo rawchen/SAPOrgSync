@@ -6,10 +6,16 @@ package com.sap360.saporgsync.config;
  */
 public class Constants {
 
-	// 飞书自建应用 Verification Token
+	// 飞书自建应用 App ID
+	public final static String APP_ID_FEISHU = "cli_a48aeeb160f8d00d";
+
+	// 飞书自建应用 App Secret
+	public final static String APP_SECRET_FEISHU = "o217Zu1yiRZhPduUnCkyPehVNPpAM1OE";
+
+	// 飞书自建应用订阅事件 Verification Token
 	public final static String VERIFICATION_TOKEN = "3d0xAnMEPdET3h4UVL8GvcwybNO2cHwk";
 
-	// 飞书自建应用 Encrypt Key
+	// 飞书自建应用订阅事件 Encrypt Key
 	public final static String ENCRYPT_KEY = "wf57O8PbcrpKXR2dfLUXFg4o5MZy8p2u";
 
 	// 域名端口

@@ -1,5 +1,8 @@
 package com.sap360.saporgsync.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 /**
@@ -9,12 +12,14 @@ import lombok.Data;
  * @date 2023-03-06 9:56
  */
 @Data
+@TableName("user")
 public class User {
 
 	/**
 	 * 飞书ID
 	 */
-	private String id;
+	@TableId(type = IdType.AUTO)
+	private long id;
 
 	/**
 	 * 姓名
@@ -22,9 +27,9 @@ public class User {
 	private String name;
 
 	/**
-	 * 用户ID（SAP系统）
+	 * 飞书用户ID
 	 */
-	private String sapId;
+	private String userId;
 
 	/**
 	 * SAP单据编号

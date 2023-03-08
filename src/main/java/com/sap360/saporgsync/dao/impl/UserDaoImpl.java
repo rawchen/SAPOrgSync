@@ -40,15 +40,14 @@ public class UserDaoImpl implements UserDao {
 
 	@Override
 	public boolean addList(List<User> users) {
-		jdbcTemplate.batchUpdate("insert into user(id, name, sap_id, doc_entry, dept_id) values (?,?,?,?,?)",
+		jdbcTemplate.batchUpdate("insert into user(name, doc_entry, dept_id, user_id) values (?,?,?,?)",
 				new BatchPreparedStatementSetter() {
 					@Override
 					public void setValues(PreparedStatement ps, int i) throws SQLException {
-						ps.setString(1, users.get(i).getId());
-						ps.setString(2, users.get(i).getName());
-						ps.setString(3, users.get(i).getSapId());
-						ps.setString(4, users.get(i).getDocEntry());
-						ps.setString(5, users.get(i).getDeptId());
+						ps.setString(1, users.get(i).getName());
+						ps.setString(2, users.get(i).getDocEntry());
+						ps.setString(3, users.get(i).getDeptId());
+						ps.setString(4, users.get(i).getUserId());
 					}
 					@Override
 					public int getBatchSize() {

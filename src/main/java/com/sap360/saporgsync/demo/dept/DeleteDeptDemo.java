@@ -1,4 +1,4 @@
-package com.sap360.saporgsync.demo;
+package com.sap360.saporgsync.demo.dept;
 
 import cn.hutool.http.HttpRequest;
 import com.sap360.saporgsync.util.TimeUtil;
@@ -6,7 +6,7 @@ import org.apache.commons.codec.digest.DigestUtils;
 
 import java.util.*;
 
-public class AddDeptDemo {
+public class DeleteDeptDemo {
 
 
     public static void makeMd5TokenAndUrl(String currentPage, String formID, String requestJson) {
@@ -16,13 +16,13 @@ public class AddDeptDemo {
         Map<String, String> objects = new HashMap<>();
         objects.put("APPID", "33461238");
         objects.put("COMPANYID", "100001");
-        // 查询接口和写入接口区分
         objects.put("FORMID", formID);
         objects.put("TIMESTAMP", timestamp);
+        objects.put("DOCENTRY","258");
         String secretKey = "624728dd116f45648ae91715a9b5b306";
         String md5Token = makeMd5Token(objects, secretKey, requestJson);
-        url.append("http://116.6.232.123:8059/OpenAPI/Company/Document/V1/Add/33461238/100001/")
-                .append(formID).append("/").append(timestamp).append("/").append(md5Token);
+        url.append("http://116.6.232.123:8059/OpenAPI/Company/Document/V1/Update/33461238/100001/")
+                .append(formID).append("/").append("258").append("/").append(timestamp).append("/").append(md5Token);
         System.out.println("url:" + url);
         try {
             String s = HttpRequest.post(url.toString())
@@ -60,21 +60,19 @@ public class AddDeptDemo {
         makeMd5TokenAndUrl("0", "-96134", "{\n" +
                 "    \"U_OEPT\":[\n" +
                 "        {\n" +
-                "            \"DocEntry\":1,\n" +
-                "            \"RowStatus\":\"A\"\n" +
+                "            \"DocEntry\":258,\n" +
+                "            \"RowStatus\":\"U\"\n" +
                 "        }\n" +
                 "    ],\n" +
                 "    \"U_EPT1\":[\n" +
                 "        {\n" +
-                "            \"ParentName\":\"上级\",\n" +
-                "            \"DeptName\":\"部门\",\n" +
+                "            \"ParentName\":\"综合一组\",\n" +
+                "            \"DeptName\":\"综合销售部22\",\n" +
                 "            \"LineNum\":1,\n" +
-                "            \"RowStatus\":\"A\",\n" +
-                "            \"DocEntry\":2\n" +
-                "        }\n" +
+                "            \"RowStatus\":\"D\"\n" +
+                "        },\n" +
                 "    ]\n" +
                 "}");
-
     }
 
 

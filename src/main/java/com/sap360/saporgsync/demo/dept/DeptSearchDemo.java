@@ -1,4 +1,4 @@
-package com.sap360.saporgsync.demo;
+package com.sap360.saporgsync.demo.dept;
 
 import cn.hutool.http.HttpRequest;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -6,7 +6,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.*;
 
-public class AddUserDemo {
+public class DeptSearchDemo {
 
 
     public static void makeMd5TokenAndUrl(String queryId, String currentPage, String formID, String requestJson) {
@@ -21,22 +21,15 @@ public class AddUserDemo {
             objects.put("QUERYID", queryId);
             objects.put("CURRENTPAGE", currentPage);
             url.append("OpenApi/Company/QueryData/V1/Query/33461238/100001/").append(queryId).append("/").append(currentPage).append("/");
-        } else {
-            objects.put("FORMID", formID);
-            url.append("OpenAPI/Company/Document/V1/Add/33461238/100001/").append(formID).append("/");
-            // objects.put("DOCENTRY","24");
-            // url.append("OpenAPI/Company/Document/V1/Update/33461238/49305/").append(formID).append("/").append("24").append("/");
-
         }
         objects.put("TIMESTAMP", (Calendar.getInstance().getTimeInMillis() / 1000) + "");
-        //  objects.put("TIMESTAMP","1661502941");
 
 
         url.append(objects.get("TIMESTAMP")).append("/");
         String secretKey = "624728dd116f45648ae91715a9b5b306";
         String md5Token = makeMd5Token(objects, secretKey, requestJson);
         url.append(md5Token);
-        System.out.println("url:" + url);
+        System.out.println("url:" + url.toString());
         try {
             String s = HttpRequest.post(url.toString())
                     .body(requestJson)
@@ -70,25 +63,7 @@ public class AddUserDemo {
 
 
     public static void main(String[] args) {
-        makeMd5TokenAndUrl(null, "0", "-9644", "{\n" +
-                "    \"U_OHEM\": [\n" +
-                "        {\n" +
-                "            \"ComCode\": \"4\",\n" +
-                "            \"EmDept\": \"123\",\n" +
-                "            \"lastName\": \"1\",\n" +
-                "            \"EnglishName\": \"1\",\n" +
-                "            \"jobTitle\": \"1\",\n" +
-                "            \"TimeOfEntry\": \"2013-12-18T00:00:00+08:00\",\n" +
-                "            \"status\": \"1\",\n" +
-                "            \"mobile\": \"18259234116\",\n" +
-                "            \"email\": \"123@qq.com\",\n" +
-                "            \"sex\": \"M\",\n" +
-                "            \"officeTel\": \"111111\",\n" +
-                "            \"RowStatus\": \"A\",\n" +
-                "            \"DocEntry\": \"219\"\n" +
-                "        }\n" +
-                "    ]\n" +
-                "}");
+        makeMd5TokenAndUrl("3058", "0", null, "{}");
 
     }
 

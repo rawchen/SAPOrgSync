@@ -1,35 +1,29 @@
-package com.sap360.saporgsync.demo;
+package com.sap360.saporgsync.demo.dept;
 
 import cn.hutool.http.HttpRequest;
+import com.sap360.saporgsync.util.TimeUtil;
 import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.*;
 
-public class DeptSearchDemo {
+public class UpdateDeptDemo {
 
 
-    public static void makeMd5TokenAndUrl(String queryId, String currentPage, String formID, String requestJson) {
+    public static void makeMd5TokenAndUrl(String currentPage, String formID, String requestJson) {
 
         StringBuffer url = new StringBuffer();
-        url.append("http://116.6.232.123:8059/");
+        String timestamp = TimeUtil.getTimestamp();
         Map<String, String> objects = new HashMap<>();
         objects.put("APPID", "33461238");
         objects.put("COMPANYID", "100001");
-        // 查询接口和写入接口区分
-        if (StringUtils.isNotBlank(queryId)) {
-            objects.put("QUERYID", queryId);
-            objects.put("CURRENTPAGE", currentPage);
-            url.append("OpenApi/Company/QueryData/V1/Query/33461238/100001/").append(queryId).append("/").append(currentPage).append("/");
-        }
-        objects.put("TIMESTAMP", (Calendar.getInstance().getTimeInMillis() / 1000) + "");
-
-
-        url.append(objects.get("TIMESTAMP")).append("/");
+        objects.put("FORMID", formID);
+        objects.put("TIMESTAMP", timestamp);
+        objects.put("DOCENTRY","556");
         String secretKey = "624728dd116f45648ae91715a9b5b306";
         String md5Token = makeMd5Token(objects, secretKey, requestJson);
-        url.append(md5Token);
-        System.out.println("url:" + url.toString());
+        url.append("http://116.6.232.123:8059/OpenAPI/Company/Document/V1/Update/33461238/100001/")
+                .append(formID).append("/").append("556").append("/").append(timestamp).append("/").append(md5Token);
+        System.out.println("url:" + url);
         try {
             String s = HttpRequest.post(url.toString())
                     .body(requestJson)
@@ -63,8 +57,22 @@ public class DeptSearchDemo {
 
 
     public static void main(String[] args) {
-        makeMd5TokenAndUrl("3058", "0", null, "{\n}");
-
+        makeMd5TokenAndUrl("0", "-96134", "{\n" +
+                "    \"U_OEPT\":[\n" +
+                "        {\n" +
+                "            \"DocEntry\":556,\n" +
+                "            \"RowStatus\":\"U\"\n" +
+                "        }\n" +
+                "    ],\n" +
+                "    \"U_EPT1\":[\n" +
+                "        {\n" +
+                "            \"ParentName\":\"终端销售部02\",\n" +
+                "            \"DeptName\":\"苏州办\",\n" +
+                "            \"LineNum\":1,\n" +
+                "            \"RowStatus\":\"U\"\n" +
+                "        },\n" +
+                "    ]\n" +
+                "}");
     }
 
 

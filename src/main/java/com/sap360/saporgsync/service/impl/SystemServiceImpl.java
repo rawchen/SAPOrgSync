@@ -2,28 +2,26 @@ package com.sap360.saporgsync.service.impl;
 
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
-import cn.hutool.http.HttpRequest;
 import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.context.AnalysisContext;
 import com.alibaba.excel.event.AnalysisEventListener;
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
-import com.sap360.saporgsync.config.Constants;
 import com.sap360.saporgsync.entity.Department;
 import com.sap360.saporgsync.entity.ExcelDept;
 import com.sap360.saporgsync.entity.SapDept;
 import com.sap360.saporgsync.mapper.DepartmentMapper;
+import com.sap360.saporgsync.service.DeptService;
 import com.sap360.saporgsync.service.SystemService;
-import com.sap360.saporgsync.util.TimeUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -34,13 +32,16 @@ public class SystemServiceImpl implements SystemService {
     @Autowired
     private DepartmentMapper departmentMapper;
 
+    @Autowired
+    private DeptService deptService;
+
     @Override
     @Transactional
     public String initDepartment() {
         // 获取飞书部门列表
         List<ExcelDept> excelDeptList = parseExcel();
         // 查询联创杰部门列表
-        List<SapDept> sapDeptList = queryDepartmentList();
+        List<SapDept> sapDeptList = deptService.queryDepartmentList();
         // 构建部门映射关系
         if (CollectionUtil.isNotEmpty(excelDeptList) && CollectionUtil.isNotEmpty(sapDeptList)) {
             Map<String, List<ExcelDept>> fsGroup = excelDeptList.stream().collect(Collectors.groupingBy(ExcelDept::getName));
@@ -79,45 +80,10 @@ public class SystemServiceImpl implements SystemService {
         return "success";
     }
 
-    private List<SapDept> queryDepartmentList() {
-        String currentPage = "0";
-        JSONObject obj = new JSONObject();
-        obj.put("DeptName", "综合一组");
-        String requestJson = obj.toJSONString();
-        String timestamp = TimeUtil.getTimestamp();
-        StringBuilder url = new StringBuilder();
-
-        Map<String, String> objects = new HashMap<>();
-        objects.put("APPID", "33461238");
-        objects.put("COMPANYID", "100001");
-        objects.put("QUERYID", Constants.QUERY_ID_DEPT);
-        objects.put("CURRENTPAGE", currentPage);
-        objects.put("TIMESTAMP", timestamp);
-
-        String md5Token = makeMd5Token(objects, Constants.SECRETKEY, requestJson);
-        url.append(Constants.DOMAIN_PORT).append(Constants.LIST_DEPT)
-                .append("/").append(Constants.QUERY_ID_DEPT)
-                .append("/").append(currentPage)
-                .append("/").append(timestamp)
-                .append("/").append(md5Token);
-        try {
-            String s = HttpRequest.post(url.toString())
-                    .body(requestJson).execute().body();
-            JSONObject result = (JSONObject) JSONObject.parse(s);
-            JSONArray resultArray = (JSONArray) result.get("Result");
-            log.info(s);
-            if (resultArray == null) {
-                return Collections.emptyList();
-            }
-            return JSONObject.parseArray(resultArray.toJSONString(), SapDept.class);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return Collections.emptyList();
-    }
-
     @Override
     public String initUser() {
+        // 初始化用户
+        // 正式库开始存在用户
         return "success";
     }
 
@@ -194,22 +160,5 @@ public class SystemServiceImpl implements SystemService {
         }
     }
 
-    public static String makeMd5Token(Map<String, String> objects, String secretKey, String requestJson) {
-        StringBuilder content = new StringBuilder();
-        content.append(secretKey);
-        // 对 resultmap 中的参数进行排序
-        List<String> keyList = new ArrayList<>();
-        Iterator<Map.Entry<String, String>> ite = objects.entrySet().iterator();
-        while (ite.hasNext()) {
-            keyList.add(ite.next().getKey());
-        }
-        Collections.sort(keyList);
-        // 拼接 secretKey
-        for (String key : keyList) {
-            content.append(key).append(objects.get(key));
-        }
-        content.append(requestJson).append(secretKey);
-        // 生成 md5 签名
-        return DigestUtils.md5Hex(content.toString());
-    }
+
 }

@@ -23,4 +23,6 @@ public interface DepartmentDao {
 	boolean deleteById(String id);
 
 	int count();
+
+	String getNameByParentId(String feishuParentId);
 }
