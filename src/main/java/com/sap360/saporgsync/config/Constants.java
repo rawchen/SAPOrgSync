@@ -7,19 +7,19 @@ package com.sap360.saporgsync.config;
 public class Constants {
 
 	// 飞书自建应用 App ID
-	public final static String APP_ID_FEISHU = "cli_a48aeeb160f8d00d";
+	public final static String APP_ID_FEISHU = "cli_a483c4fd3ffc900e";
 
 	// 飞书自建应用 App Secret
-	public final static String APP_SECRET_FEISHU = "o217Zu1yiRZhPduUnCkyPehVNPpAM1OE";
+	public final static String APP_SECRET_FEISHU = "sahrtYO8zj49qHL6fzDtEgypSUl4YnHm";
 
 	// 飞书自建应用订阅事件 Verification Token
-	public final static String VERIFICATION_TOKEN = "3d0xAnMEPdET3h4UVL8GvcwybNO2cHwk";
+	public final static String VERIFICATION_TOKEN = "KwIMEjPLCzY0RFdFhHzRzc86K2S0D4gN";
 
 	// 飞书自建应用订阅事件 Encrypt Key
-	public final static String ENCRYPT_KEY = "wf57O8PbcrpKXR2dfLUXFg4o5MZy8p2u";
+	public final static String ENCRYPT_KEY = "kJKZxCzb3v6LZJO3r8oESfSNN8f6x6o3";
 
 	// 域名端口
-	public final static String DOMAIN_PORT = "http://116.6.232.123:8059";
+	public final static String DOMAIN_PORT = "http://192.168.16.215:8059";
 
 	// 应用ID
 	public final static String APPID = "33461238";
@@ -39,13 +39,16 @@ public class Constants {
 	// queryId 部门查询ID
 	public final static String QUERY_ID_DEPT = "3058";
 
+	// queryId 用户查询ID
+	public final static String QUERY_ID_USER = "3057";
+
 	// 添加接口
 	public final static String ADD = "/OpenAPI/Company/Document/V1/Add/" + APPID + "/" + COMPANYID;
 
-	// 修改成员接口
-	public final static String UPDATE_USER = "/OpenAPI/Company/Document/V1/Update/" + APPID + "/" + COMPANYID;
+	// 修改接口
+	public final static String UPDATE = "/OpenAPI/Company/Document/V1/Update/" + APPID + "/" + COMPANYID;
 
-	// 查找部门列表接口
-	public final static String LIST_DEPT = "/OpenApi/Company/QueryData/V1/Query/" + APPID + "/" + COMPANYID;
+	// 查找列表接口
+	public final static String QUERY = "/OpenApi/Company/QueryData/V1/Query/" + APPID + "/" + COMPANYID;
 
 }

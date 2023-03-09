@@ -4,8 +4,8 @@ import cn.hutool.http.HttpRequest;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.sap360.saporgsync.config.Constants;
-import com.sap360.saporgsync.entity.SapDept;
-import com.sap360.saporgsync.service.DeptService;
+import com.sap360.saporgsync.entity.SapUser;
+import com.sap360.saporgsync.service.UserService;
 import com.sap360.saporgsync.util.SignUtil;
 import com.sap360.saporgsync.util.TimeUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -22,29 +22,29 @@ import java.util.Map;
  */
 @Slf4j
 @Service
-public class DeptServiceImpl implements DeptService {
+public class UserServiceImpl implements UserService {
 
 	/**
-	 * 获取SAP部门列表
+	 * 获取SAP用户列表
 	 *
 	 * @return
 	 */
-	public List<SapDept> queryDepartmentList() {
+	public List<SapUser> queryUserList() {
 		String currentPage = "0";
-		String requestJson = "{}";
+		String requestJson = "{\"lastName\":\"\",\n\"mobile\":\"\"}";
 		String timestamp = TimeUtil.getTimestamp();
 		StringBuilder url = new StringBuilder();
 
 		Map<String, String> objects = new HashMap<>();
 		objects.put("APPID", Constants.APPID);
 		objects.put("COMPANYID", Constants.COMPANYID);
-		objects.put("QUERYID", Constants.QUERY_ID_DEPT);
+		objects.put("QUERYID", Constants.QUERY_ID_USER);
 		objects.put("CURRENTPAGE", currentPage);
 		objects.put("TIMESTAMP", timestamp);
 
 		String md5Token = SignUtil.makeMd5Token(objects, Constants.SECRETKEY, requestJson);
 		url.append(Constants.DOMAIN_PORT).append(Constants.QUERY)
-				.append("/").append(Constants.QUERY_ID_DEPT)
+				.append("/").append(Constants.QUERY_ID_USER)
 				.append("/").append(currentPage)
 				.append("/").append(timestamp)
 				.append("/").append(md5Token);
@@ -56,7 +56,7 @@ public class DeptServiceImpl implements DeptService {
 			if (resultArray == null) {
 				return Collections.emptyList();
 			}
-			return JSONObject.parseArray(resultArray.toJSONString(), SapDept.class);
+			return JSONObject.parseArray(resultArray.toJSONString(), SapUser.class);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

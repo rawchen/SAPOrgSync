@@ -24,7 +24,6 @@ public class DeptSearchDemo {
         }
         objects.put("TIMESTAMP", (Calendar.getInstance().getTimeInMillis() / 1000) + "");
 
-
         url.append(objects.get("TIMESTAMP")).append("/");
         String secretKey = "624728dd116f45648ae91715a9b5b306";
         String md5Token = makeMd5Token(objects, secretKey, requestJson);

@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.sap360.saporgsync.entity.Department;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -18,6 +19,6 @@ public interface DepartmentMapper extends BaseMapper<Department> {
         return selectList(new LambdaQueryWrapper<>());
     }
 
-    void insertBatch(List<Department> departments);
+    void insertBatch(@Param("departments") List<Department> departments);
 
 }

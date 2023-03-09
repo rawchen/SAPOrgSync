@@ -1,6 +1,6 @@
 package com.sap360.saporgsync.execution;
 
-import com.sap360.saporgsync.controller.EventController;
+import com.sap360.saporgsync.service.SystemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.annotation.Order;
@@ -17,10 +17,13 @@ import org.springframework.stereotype.Component;
 public class InitialOperation implements CommandLineRunner {
 
 	@Autowired
-	private EventController eventController;
+	private SystemService systemService;
 
 	@Override
 	public void run(String... args) throws Exception {
-
+		String resultDept = systemService.initDepartment();
+		System.out.println("初始化部门：" + resultDept);
+		String resultUser = systemService.initUser();
+		System.out.println("初始化用户：" + resultUser);
 	}
 }

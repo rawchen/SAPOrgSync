@@ -17,6 +17,17 @@ public class ExcelDept implements Comparable<ExcelDept> {
     @Override
     public int compareTo(ExcelDept o) {
         String str = o.getName().replace("/", "");
-        return name.length() > str.length() ? 0 : 1;
+        int count = o.getName().length() - str.length();
+
+        String strThis = this.name.replace("/", "");
+        int countThis = this.name.length() - strThis.length();
+
+        if (count > countThis) {
+            return -1;
+        } else if (count < countThis) {
+            return 1;
+        } else {
+            return 0;
+        }
     }
 }

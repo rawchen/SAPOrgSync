@@ -22,10 +22,10 @@ public class StringUtil {
 			return "A";
 		} else if ("1".equals(employeeType)) {
 			return "A";
+		} else if ("2".equals(employeeType)) {
+			return "C";
 		} else if ("6".equals(employeeType)) {
 			return "B";
-		} else if ("7".equals(employeeType)) {
-			return "C";
 		}
 		return "A";
 	}
