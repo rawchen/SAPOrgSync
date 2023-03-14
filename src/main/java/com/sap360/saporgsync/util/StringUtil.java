@@ -45,4 +45,67 @@ public class StringUtil {
 			return mobile;
 		}
 	}
+
+	public static String processChineseTitleOrder(String json) {
+		json = json.replaceAll("\"iD\"", "\"ID\"")
+				.replaceAll("\"customerCode\"", "\"客户代码\"")
+				.replaceAll("\"customerName\"", "\"客户名称\"")
+				.replaceAll("\"documentDate\"", "\"单据日期\"")
+				.replaceAll("\"saleDeptCode\"", "\"销售部门代码\"")
+				.replaceAll("\"sellerCode\"", "\"销售员代码\"")
+				.replaceAll("\"documentMakerCode\"", "\"制单人代码\"")
+				.replaceAll("\"modelName\"", "\"型号\"")
+				.replaceAll("\"brandName\"", "\"品牌\"")
+				.replaceAll("\"warehouseName\"", "\"仓库\"")
+				.replaceAll("\"unitPrice\"", "\"含税单价\"")
+				.replaceAll("\"unitPriceWithoutVAT\"", "\"未税单价\"")
+				.replaceAll("\"exchangeRate\"", "\"汇率\"")
+				.replaceAll("\"currency\"", "\"货币\"")
+				.replaceAll("\"orderNumber\"", "\"订单号\"")
+				.replaceAll("\"firstTransaction\"", "\"首次交易\"")
+				.replaceAll("\"orderType\"", "\"订单类型\"")
+				.replaceAll("\"quantity\"", "\"数量\"")
+				.replaceAll("\"taxIncludedAmount\"", "\"含税金额(交易货币)（W）\"")
+				.replaceAll("\"taxIncludedAmountRMB\"", "\"含税金额(RMB)（W）\"")
+				.replaceAll("\"untaxedAmount\"", "\"未税金额(RMB)（W）\"")
+				.replaceAll("\"actualUntaxedAmount\"", "\"实际未税金额(RMB)（W）\"")
+				.replaceAll("\"charaterOfCustomer\"", "\"客户性质\"")
+				.replaceAll("\"isKACustomer\"", "\"是否为KA客户\"");
+		return json;
+	}
+
+	public static String processChineseTitleRefund(String json) {
+		json = json.replaceAll("\"iD\"", "\"ID\"")
+				.replaceAll("\"sellerNumber\"", "\"销售员编号\"")
+				.replaceAll("\"saleDeptNumber\"", "\"销售部门编号\"")
+				.replaceAll("\"date\"", "\"日期\"")
+				.replaceAll("\"paymentAmount\"", "\"回款金额(W)\"")
+				.replaceAll("\"paymentGrossMargin\"", "\"回款毛利(W)\"")
+				.replaceAll("\"costAmount\"", "\"成本金额(W)\"")
+				.replaceAll("\"customerPaymentAmount\"", "\"VIP客户回款金额(W)\"");
+		return json;
+	}
+
+	public static String processChineseTitleReturnable(String json) {
+		json = json.replaceAll("\"iD\"", "\"ID\"")
+				.replaceAll("\"returnTime\"", "\"退货时间\"")
+				.replaceAll("\"returnReason\"", "\"退货原因\"")
+				.replaceAll("\"qualityProblem\"", "\"质量问题\"")
+				.replaceAll("\"salesNumber\"", "\"所属销售员编号\"")
+				.replaceAll("\"returnedQuantity\"", "\"退货数量\"")
+				.replaceAll("\"unitPrice\"", "\"含税单价\"")
+				.replaceAll("\"untaxedPrice\"", "\"未税单价\"")
+				.replaceAll("\"unitAmount\"", "\"含税金额(交易货币)\"")
+				.replaceAll("\"untaxedAmount\"", "\"未税金额(交易货币)\"")
+				.replaceAll("\"unitAmountRmb\"", "\"含税金额(RMB)\"")
+				.replaceAll("\"untaxedAmountRmb\"", "\"未税金额(RMB)\"")
+				.replaceAll("\"unitAmountMyriad\"", "\"含税金额(交易货币)/W\"")
+				.replaceAll("\"untaxedAmountMyriad\"", "\"未税金额(交易货币)/W\"")
+				.replaceAll("\"unitAmountRmbMyriad\"", "\"含税金额(RMB)/W\"")
+				.replaceAll("\"untaxedAmountRmbMyriad\"", "\"未税金额(RMB)/W\"")
+				.replaceAll("\"model\"", "\"型号\"")
+				.replaceAll("\"brand\"", "\"品牌\"")
+				.replaceAll("\"deptNumber\"", "\"部门编号\"");
+		return json;
+	}
 }

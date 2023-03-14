@@ -8,3 +8,9 @@ spring:
     url: jdbc:mysql://localhost:3306/saporgsync?serverTimezone=Asia/Shanghai&characterEncoding=utf8&useUnicode=true&useSSL=false
     username: root
     password: root
+  data:
+    mongodb:
+      database: LCJ_SAP360
+      uri: mongodb://127.0.0.1:27017/LCJ_SAP360
+      username: lundong
+      password: lundong6666

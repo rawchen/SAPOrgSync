@@ -1,5 +1,6 @@
 package com.sap360.saporgsync;
 
+import com.sap360.saporgsync.config.Constants;
 import com.sap360.saporgsync.entity.SapUser;
 import com.sap360.saporgsync.service.UserService;
 import com.sap360.saporgsync.service.impl.UserServiceImpl;
@@ -21,7 +22,7 @@ class SapOrgSyncApplicationTests {
 
 	@Test
 	void getParentId() {
-		String accessToken = SignUtil.getAccessToken();
+		String accessToken = SignUtil.getAccessToken(Constants.APP_ID_FEISHU, Constants.APP_SECRET_FEISHU);
 
 		String result = SignUtil.getDepartmentIdAndName(accessToken, "od-b66de0fbb2edb71b7f5b020d675a3e04");
 		System.out.println(result);
