@@ -128,9 +128,9 @@ public class MongoSyncServiceImpl implements MongoSyncService {
 	 *
 	 * @return
 	 */
-	@Scheduled(cron = "0 0 3 ? * *")
+	@Scheduled(cron = "0 0 5 ? * *")
 	// 测试定时：每分钟执行一次
-//	@Scheduled(cron = "0 0/1 * * * ?")
+//	@Scheduled(cron = "0 0/3 * * * ?")
 	@Override
 	public void syncDataReturnable() {
 		try {

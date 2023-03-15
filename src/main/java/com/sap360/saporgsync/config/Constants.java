@@ -22,10 +22,10 @@ public class Constants {
 	public final static String ENCRYPT_KEY = "kJKZxCzb3v6LZJO3r8oESfSNN8f6x6o3";
 
 	// MongoDB多维表格同步 App ID
-	public final static String APP_ID_MONGO = "cli_a48407b1683f500c";
+	public final static String APP_ID_MONGO = "cli_a49b3e292aba500e";
 
 	// MongoDB多位表格同步 App Secret
-	public final static String APP_SECRET_MONGO = "Pa0MzCnwvmv9Djn66JbTafvEKoWfBU7k";
+	public final static String APP_SECRET_MONGO = "sObHhOrrMPpOclw9MCBaZgWoMPD5EARY";
 
 	// 域名端口
 	public final static String DOMAIN_PORT = "http://192.168.16.97:8059";
@@ -61,16 +61,16 @@ public class Constants {
 	public final static String QUERY = "/OpenApi/Company/QueryData/V1/Query/" + APPID + "/" + COMPANYID;
 
 	// MongoDB多维表格同步 多维表格 bitable app token
-	public final static String APP_TOKEN = "bascnWZ508kPtmZFDCHZQU6tYwe";
+	public final static String APP_TOKEN = "bascnD2VEMx6JwCuw0GEH25kpC1";
 
 	// MongoDB多维表格同步 数据表ID 销售订单
-	public final static String TABLE_ID_ORDER = "tblQT7GoEofmlOEd";
+	public final static String TABLE_ID_ORDER = "tbl3h1SIw7VFNWwl";
 
 	// MongoDB多维表格同步 数据表ID 销售回款
-	public final static String TABLE_ID_REFUND = "tblFrPAHfavwOxbK";
+	public final static String TABLE_ID_REFUND = "tblBtkgthcJMpy3l";
 
 	// MongoDB多维表格同步 数据表ID 销售退货
-	public final static String TABLE_ID_RETURNABLE = "tblSmRdy26Fyj1vS";
+	public final static String TABLE_ID_RETURNABLE = "tblwWPbz7xsG2wrD";
 
 	// 销售订单内存记录IDS
 	public static List<String> recordIdsOrder = new ArrayList<>();

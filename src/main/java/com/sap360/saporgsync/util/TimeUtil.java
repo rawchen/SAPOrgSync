@@ -28,9 +28,14 @@ public class TimeUtil {
 	 * @return
 	 */
 	public static String timestampToUTC(String joinTime) {
-		LocalDateTime localDateTime = LocalDateTimeUtil
-				.ofUTC(Long.parseLong(joinTime + "000") + 28800000);
-		return localDateTime
-				.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss+08:00"));
+		try {
+			LocalDateTime localDateTime = LocalDateTimeUtil
+					.ofUTC(Long.parseLong(joinTime + "000") + 28800000);
+			return localDateTime
+					.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss+08:00"));
+		} catch (NumberFormatException e) {
+			return LocalDateTime.now().
+					format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss+08:00"));
+		}
 	}
 }

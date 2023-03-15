@@ -10,7 +10,7 @@ spring:
     password: root
   data:
     mongodb:
-      database: LCJ_SAP360
-      uri: mongodb://127.0.0.1:27017/LCJ_SAP360
-      username: lundong
-      password: lundong6666
+      database: LCJ_SAP
+      uri: mongodb://lundong:lundong6666@192.168.16.236:27017/LCJ_SAP
+#      username: lundong
+#      password: lundong6666

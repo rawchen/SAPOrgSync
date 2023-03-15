@@ -96,6 +96,14 @@ public class EventController {
                     requestJson.put("mobile", StringUtil.mobileDivAreaCode(mobile));
                     requestJson.put("email", email);
 
+                    // 判断这个用户在映射表是否已经存在（防止事件流重复订阅）
+                    User userTemp = userMapper.selectOne(new LambdaQueryWrapper<User>()
+                            .eq(User::getUserId, user_id).last("limit 1"));
+                    if (userTemp != null) {
+                        log.info("P2UserCreatedV3: 添加失败，重复添加用户：" + name);
+                        return;
+                    }
+
                     // 拿到飞书-SAP映射的部门id
                     log.info("department_ids: {}", department_ids.getString(0));
                     String deptIdAndName = SignUtil.getDepartmentIdAndName(department_ids.getString(0));
@@ -113,7 +121,7 @@ public class EventController {
                     requestJson.put("JobNum", employee_no);
                     requestJson.put("sex", "1".equals(gender) ? "F" : "M");
                     requestJson.put("city", city);
-//                    requestJson.put("Leader", leader_user_id);
+                    //                    requestJson.put("Leader", leader_user_id);
                     requestJson.put("Status", StringUtil.employeeConvert(employee_type));                    // A正式B离职C试用
                     requestJson.put("TimeOfEntry", TimeUtil.timestampToUTC(join_time));
                     requestJson.put("jobTitle", job_title);
@@ -124,7 +132,7 @@ public class EventController {
 
                     // 2.接口参数处理
                     String timestamp = TimeUtil.getTimestamp();
-                    StringBuffer url = new StringBuffer();
+                    StringBuilder url = new StringBuilder();
                     Map<String, String> objects = new HashMap<>();
                     objects.put("APPID", Constants.APPID);
                     objects.put("COMPANYID", Constants.COMPANYID);
@@ -150,7 +158,7 @@ public class EventController {
                                 User user = new User();
                                 user.setName(name);
                                 user.setDocEntry(resultObject.getString("Result"));
-//                                user.setSapId();
+                                //                                user.setSapId();
                                 user.setUserId(user_id);
                                 user.setDeptId(deptId);
                                 userMapper.insert(user);
@@ -233,7 +241,7 @@ public class EventController {
 
                     // 2.接口参数处理
                     String timestamp = TimeUtil.getTimestamp();
-                    StringBuffer url = new StringBuffer();
+                    StringBuilder url = new StringBuilder();
                     Map<String, String> objects = new HashMap<>();
                     objects.put("APPID", Constants.APPID);
                     objects.put("COMPANYID", Constants.COMPANYID);
@@ -291,7 +299,7 @@ public class EventController {
                     }
 
                     // SAP删除，根据映射表的docEntry
-                    StringBuffer url = new StringBuffer();
+                    StringBuilder url = new StringBuilder();
                     String timestamp = TimeUtil.getTimestamp();
                     Map<String, String> objects = new HashMap<>();
                     objects.put("APPID", Constants.APPID);
@@ -380,7 +388,7 @@ public class EventController {
                             "        }\n" +
                             "    ]\n" +
                             "}";
-                    StringBuffer url = new StringBuffer();
+                    StringBuilder url = new StringBuilder();
                     String timestamp = TimeUtil.getTimestamp();
                     Map<String, String> objects = new HashMap<>();
                     objects.put("APPID", Constants.APPID);
@@ -464,7 +472,7 @@ public class EventController {
                         // 修改
                     }
                     // 修改SAP系统部门的名称ParentName和DeptName
-                    StringBuffer url = new StringBuffer();
+                    StringBuilder url = new StringBuilder();
                     String timestamp = TimeUtil.getTimestamp();
                     Map<String, String> objects = new HashMap<>();
                     objects.put("APPID", Constants.APPID);
@@ -529,7 +537,7 @@ public class EventController {
                     }
 
                     // SAP删除，根据映射表的docEntry
-                    StringBuffer url = new StringBuffer();
+                    StringBuilder url = new StringBuilder();
                     String timestamp = TimeUtil.getTimestamp();
                     Map<String, String> objects = new HashMap<>();
                     objects.put("APPID", Constants.APPID);
@@ -627,7 +635,7 @@ public class EventController {
 
             // 2.接口参数处理
             String timestamp = TimeUtil.getTimestamp();
-            StringBuffer url = new StringBuffer();
+            StringBuilder url = new StringBuilder();
             Map<String, String> objects = new HashMap<>();
             objects.put("APPID", Constants.APPID);
             objects.put("COMPANYID", Constants.COMPANYID);
@@ -766,16 +774,5 @@ public class EventController {
 
         return "success";
     }
-
-    /**
-     * SAP签名
-     *
-     * @param objects
-     * @param secretKey
-     * @param requestJson
-     * @return
-     */
-
-
 
 }
